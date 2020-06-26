@@ -5,7 +5,6 @@
   const tasks = [];
   const taskForm = document.getElementById('taskForm');
   const tbody = document.querySelector('tbody');
-  const rebtn = document.getElementsByName('rebtn');
   // ↓クリックイベント↓
   // 追加ボタン
   btn.addEventListener('click', () => {
@@ -20,9 +19,9 @@
   // タスク追加時の処理内容
   const addTask = () => {
     const task = {
-      idNumber: '',
+      idNumber: 0,
       taskName: taskForm.value,
-      status: { 0: '作業中', 1: '完了' },
+      status: '作業中',
     }
     tasks.push(task);
     // タスク生成時の処理内容
@@ -31,28 +30,33 @@
       tasks.forEach((task, index) => {
         // 必要な要素生成定義
         const tr = document.createElement('tr');
-        const itd = document.createElement('td');
-        const ttd = document.createElement('td');
-        const std = document.createElement('td');
-        const rtd = document.createElement('td');
-        const statusbtn = document.createElement('button');
-        const removebtn = document.createElement('button');
+        const idTd = document.createElement('td');
+        const taskTd = document.createElement('td');
+        const statusTd = document.createElement('td');
+        const removeTd = document.createElement('td');
+        const statusBtn = document.createElement('button');
+        const removeBtn = document.createElement('button');
         // 生成要素の配置処理
         tbody.appendChild(tr);
-        tr.appendChild(itd);
-        tr.appendChild(ttd);
-        tr.appendChild(std);
-        tr.appendChild(rtd);
-        std.appendChild(statusbtn);
-        rtd.appendChild(removebtn);
-        tr.className = 'working';
-        itd.textContent = index;
-        ttd.textContent = task.taskName;
-        statusbtn.textContent = task.status[0];
-        removebtn.textContent = '削除';
+        tr.appendChild(idTd);
+        tr.appendChild(taskTd);
+        tr.appendChild(statusTd);
+        tr.appendChild(removeTd);
+        statusTd.appendChild(statusBtn);
+        removeTd.appendChild(removeBtn);
+        if (tasks[index].status === '作業中') {
+          tr.className = 'working';
+        } else {
+          tr.className = 'complete';
+        }
+        tasks[index].idNumber = index;
+        idTd.textContent = task.idNumber;
+        taskTd.textContent = task.taskName;
+        statusBtn.textContent = task.status;
+        removeBtn.textContent = '削除';
         // 削除ボタン
-        removebtn.addEventListener('click', () => {
-          re();
+        removeBtn.addEventListener('click', () => {
+          removeTask();
           createTask();
         });
       });
@@ -61,9 +65,10 @@
     taskForm.value = '';
   }
   // 削除処理内容
-  const re = () => {
-    const removetr = event.target.parentNode.parentNode;
-    const number = removetr.firstChild.innerHTML;
+  // 配列から該当オブジェクトの削除を行う
+  const removeTask = () => {
+    const removeTr = event.target.parentNode.parentNode;
+    const number = removeTr.firstChild.innerHTML;
     tasks.splice(number, 1);
   }
 }
